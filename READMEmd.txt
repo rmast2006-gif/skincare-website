@@ -281,7 +281,7 @@ This project is proprietary software. All rights reserved.
 ## Support
 
 For questions, issues, or feature requests:
-- **Email:** [your-email@domain.com]
+- **Email:** [rmast2006@gmail.com]
 - **GitHub:** https://github.com/rmast2006-gif/skincare-website
 
 ---
