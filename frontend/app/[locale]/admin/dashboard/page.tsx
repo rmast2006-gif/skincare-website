@@ -231,17 +231,25 @@ export default function AdminDashboard() {
     readFiles(files, setAddImages);
   };
 
-  const readFiles = (files: File[], setter: React.Dispatch<React.SetStateAction<string[]>>) => {
-    files.forEach(file => {
-      const reader = new FileReader();
-      reader.onload = (ev) => {
-        if (ev.target?.result) {
-          setter(prev => [...prev, ev.target!.result as string]);
-        }
-      };
-      reader.readAsDataURL(file);
+  const readFiles = async (files: File[], setter: React.Dispatch<React.SetStateAction<string[]>>) => {
+  try {
+    const formData = new FormData();
+    files.forEach(file => formData.append('files', file));
+
+    const res = await fetch('/api/upload/upload', {
+      method: 'POST',
+      body: formData,
     });
-  };
+
+    const data = await res.json();
+    if (data.urls) {
+      setter(prev => [...prev, ...data.urls]);
+    }
+  } catch (err) {
+    console.error('Upload error:', err);
+    alert('Image upload failed');
+  }
+};
 
   const removeEditImage = (index: number) => setEditImages(prev => prev.filter((_, i) => i !== index));
   const removeAddImage = (index: number) => setAddImages(prev => prev.filter((_, i) => i !== index));
