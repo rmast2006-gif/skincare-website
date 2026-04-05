@@ -1,0 +1,223 @@
+{
+  "Nav": {
+    "home": "Home",
+    "about": "About",
+    "contact": "Contact",
+    "topicrem": "Topicrem",
+    "novexpert": "Novexpert",
+    "cart": "Cart"
+  },
+  "Home": {
+    "specialOffer": "SPECIAL OFFER!",
+    "discount": "Get 20% OFF on all products! Use code:",
+    "atCheckout": "at checkout",
+    "bestsellers": "Bestsellers",
+    "hero": {
+      "title": "Premium Skincare",
+      "brands": "Topicrem & Novexpert",
+      "subtitle": "French Dermatological Excellence",
+      "description": "Two leading French skincare brands trusted by dermatologists worldwide. Discover the perfect blend of dermatological expertise and natural innovation.",
+      "slideTopicremTitle": "Ultra-Moisturizing",
+      "slideTopicremSubtitle": "Our dermatological icons",
+      "slideTopicremDesc": "Expert care for sensitive skin.",
+      "slideNovexpertTitle": "Natural Innovation",
+      "slideNovexpertSubtitle": "Science meets nature",
+      "slideNovexpertDesc": "Powerful anti-aging with proven results.",
+      "discover": "Discover",
+      "exploreTopicrem": "Explore Topicrem",
+      "exploreNovexpert": "Explore Novexpert",
+      "brandStrip": {
+        "laboratory": "Laboratory",
+        "since": "Since 1993",
+        "forSkin": "For all sensitive skin",
+        "madeIn": "Made in France",
+        "paris": "Paris Dermatological"
+      }
+    },
+    "whyChoose": {
+      "title": "Why Choose Our Brands",
+      "dermatologicallyTested": {
+        "title": "Dermatologically Tested",
+        "description": "All products are clinically tested and approved by dermatologists for safety and efficacy"
+      },
+      "frenchExpertise": {
+        "title": "French Expertise",
+        "description": "Made in France following the highest European standards for quality and skincare innovation"
+      },
+      "naturalInnovation": {
+        "title": "Natural Innovation",
+        "description": "Powerful formulations combining natural ingredients with advanced technology for visible results"
+      }
+    },
+    "trustIndicators": {
+      "premiumProducts": "Premium Products",
+      "trustedBrands": "Trusted Brands",
+      "freeShipping": "Free Shipping",
+      "onAllOrders": "On All Orders"
+    },
+    "ourBrands": "Our Premium Brands",
+    "topicrem": {
+      "tagline": "Dermatological Expertise for All Skin Types",
+      "description": "Topicrem offers dermatologically tested skincare solutions designed for sensitive and demanding skin. Trusted by dermatologists worldwide for over 20 years, our products combine efficacy with gentleness.",
+      "exploreCollection": "Explore Collection",
+      "followOnInstagram": "Follow on Instagram"
+    },
+    "novexpert": {
+      "tagline": "Expert Science, Natural Innovation",
+      "description": "Novexpert combines scientific expertise with natural ingredients to create powerful anti-aging and skin health solutions. Made in France with proven efficacy.",
+      "exploreCollection": "Explore Collection",
+      "followOnInstagram": "Follow on Instagram"
+    },
+    "madeInFrance": "Made in France"
+  },
+  "Cart": {
+    "title": "Shopping Cart",
+    "itemsInCart": "item in your cart",
+    "itemsInCartPlural": "items in your cart",
+    "empty": "Your cart is empty",
+    "emptyDescription": "Add some luxurious skincare products to your cart and start your journey to radiant skin.",
+    "continueShopping": "Continue Shopping",
+    "orderSummary": "Order Summary",
+    "haveCoupon": "Have a coupon code?",
+    "enterCode": "Enter code (e.g., SKIN20)",
+    "apply": "Apply",
+    "remove": "Remove",
+    "invalidCoupon": "Invalid coupon code",
+    "couponApplied": "Coupon applied",
+    "subtotal": "Subtotal",
+    "discount": "Discount",
+    "shipping": "Shipping",
+    "free": "FREE",
+    "total": "Total",
+    "proceedToCheckout": "Proceed to Checkout",
+    "each": "each"
+  },
+  "Checkout": {
+    "title": "Checkout",
+    "customerInformation": "Customer Information",
+    "fullName": "Full Name",
+    "phone": "Phone Number",
+    "email": "Email Address",
+    "address": "Address",
+    "city": "City",
+    "notes": "Additional Notes",
+    "notesPlaceholder": "Any special requests or delivery notes",
+    "orderSummary": "Order Summary",
+    "subtotal": "Subtotal",
+    "shipping": "Shipping",
+    "free": "FREE",
+    "total": "Total",
+    "placeOrder": "Place Order",
+    "continueShopping": "Continue Shopping",
+    "qty": "Qty"
+  },
+  "Contact": {
+    "title": "Contact Us",
+    "subtitle": "We're Here to Help",
+    "getInTouch": "Get in Touch",
+    "description": "Have questions about our products or need skincare recommendations? Our team is here to assist you.",
+    "name": "Name",
+    "email": "Email",
+    "message": "Your Message",
+    "messagePlaceholder": "How can we help you?",
+    "send": "Send via WhatsApp",
+    "contactInfo": "Contact Information",
+    "emailUs": "Email Us",
+    "callUs": "Call Us",
+    "location": "Location",
+    "servingJordan": "Serving Jordan",
+    "brands": "Topicrem & Novexpert - Jordan"
+  },
+  "About": {
+    "title": "Topicrem & Novexpert",
+    "subtitle": "French Skincare Excellence",
+    "ourStory": "Our Story",
+    "storyContent": "We are proud to bring two leading French skincare brands to Jordan: Topicrem and Novexpert. Both brands represent the pinnacle of French skincare expertise, combining rich heritage of dermatological research with modern innovation. Our mission is to bring you the finest skincare products trusted by dermatologists and consumers worldwide.",
+    "topicrem": {
+      "title": "Topicrem",
+      "subtitle": "Dermatological Expertise Since 2003",
+      "description": "Topicrem is a French skincare brand specializing in dermatological solutions for sensitive skin. With products tested and recommended by dermatologists, Topicrem offers safe, effective, and gentle skincare solutions for all skin types.",
+      "followOnInstagram": "Follow Topicrem on Instagram"
+    },
+    "novexpert": {
+      "title": "Novexpert",
+      "subtitle": "Expert Science, Natural Innovation",
+      "description": "Novexpert combines scientific expertise with natural ingredients to create powerful anti-aging and skin health solutions. Made in France with a commitment to efficacy and eco-responsibility, Novexpert offers advanced formulations backed by research.",
+      "followOnInstagram": "Follow Novexpert on Instagram"
+    },
+    "whyChoose": "Why Choose These Brands",
+    "frenchExcellence": {
+      "title": "French Excellence",
+      "description": "Both brands embody the French commitment to quality and innovation in skincare"
+    },
+    "expertFormulas": {
+      "title": "Expert Formulas",
+      "description": "Developed by dermatologists and scientists using cutting-edge research and premium ingredients"
+    },
+    "provenResults": {
+      "title": "Proven Results",
+      "description": "Clinically tested products with expert recommendations for their efficacy and safety"
+    },
+    "forAllSkin": {
+      "title": "For All Skin Types",
+      "description": "Comprehensive solutions for sensitive, dry, oily, combination, and mature skin"
+    }
+  },
+  "Product": {
+    "orderWhatsApp": "Order on WhatsApp",
+    "line": "Line",
+    "selectVariant": "Select Size",
+    "addToCart": "Add to Cart",
+    "addedToCart": "Added to Cart",
+    "description": "Description",
+    "benefits": "Benefits",
+    "ingredients": "Ingredients",
+    "keyIngredients": "Key Ingredients",
+    "spotlight": "Spotlight Ingredient",
+    "usage": "How to Use",
+    "texture": "Texture",
+    "skinType": "Skin Type",
+    "products": "products",
+    "product": "product",
+    "exploreCollection": "Explore Collection",
+    "viewDetails": "View Details",
+    "allProducts": "All Products",
+    "followOnInstagram": "Follow us on Instagram",
+    "backTo": "Back to"
+  },
+  "Common": {
+    "loading": "Loading...",
+    "error": "An error occurred",
+    "tryAgain": "Try Again",
+    "backHome": "Back to Home",
+    "learnMore": "Learn More",
+    "shopNow": "Shop Now",
+    "madeInFrance": "Made in France",
+    "currency": "JOD",
+    "jod": "JOD"
+  },
+  "BrandPages": {
+    "topicrem": {
+      "title": "Topicrem",
+      "tagline": "Dermatological Expertise for All Skin Types",
+      "description": "Topicrem offers dermatologically tested skincare solutions designed for sensitive and demanding skin. Trusted by dermatologists worldwide for over 20 years.",
+      "followButton": "Follow us on Instagram"
+    },
+    "novexpert": {
+      "title": "Novexpert",
+      "tagline": "Expert Science, Natural Innovation",
+      "description": "Novexpert combines scientific expertise with natural ingredients to create powerful anti-aging and skin health solutions. Made in France with proven efficacy.",
+      "followButton": "Follow us on Instagram"
+    }
+  },
+  "Footer": {
+    "tagline": "Topicrem & Novexpert",
+    "description": "Premium French skincare brands available in Jordan. Professional skincare products trusted by dermatologists.",
+    "quickLinks": "Quick Links",
+    "ourBrands": "Our Brands",
+    "followUs": "Follow Us",
+    "rights": "All rights reserved",
+    "email": "Email",
+    "phone": "Phone"
+  }
+}

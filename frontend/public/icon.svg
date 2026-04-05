@@ -1,0 +1,14 @@
+<svg width="180" height="180" viewBox="0 0 180 180" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <style>
+    @media (prefers-color-scheme: light) {
+      .bg { fill: #1a1a1a; }
+      .text { fill: #fff; }
+    }
+    @media (prefers-color-scheme: dark) {
+      .bg { fill: #fff; }
+      .text { fill: #1a1a1a; }
+    }
+  </style>
+  <rect class="bg" width="180" height="180" rx="24" />
+  <text class="text" x="90" y="118" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="72" font-weight="bold" letter-spacing="-2">T&amp;N</text>
+</svg>
