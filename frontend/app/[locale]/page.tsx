@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import { Link } from "@/src/i18n/navigation";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
 import { setRequestLocale } from "next-intl/server";
 import { Button } from "@/components/ui/button";
 import { SiteHeader } from "@/components/site-header";
@@ -30,6 +30,7 @@ export default function HomePage() {
   const t = useTranslations("Home");
   const tNav = useTranslations("Nav");
   const tCommon = useTranslations("Common");
+  const locale = useLocale();
 
   const [bannerVisible, setBannerVisible] = useState(true);
   const [heroIndex, setHeroIndex] = useState(0);
@@ -310,7 +311,7 @@ export default function HomePage() {
                 aria-label="Scroll bestsellers left"
                 className="p-2 rounded-full border border-border bg-card hover:bg-muted transition-colors touch-manipulation"
               >
-                <ChevronLeft className="h-6 w-6 text-foreground" />
+                {locale === "ar" ? <ChevronRight className="h-6 w-6 text-foreground" /> : <ChevronLeft className="h-6 w-6 text-foreground" />}
               </button>
               <button
                 type="button"
@@ -318,7 +319,7 @@ export default function HomePage() {
                 aria-label="Scroll bestsellers right"
                 className="p-2 rounded-full border border-border bg-card hover:bg-muted transition-colors touch-manipulation"
               >
-                <ChevronRight className="h-6 w-6 text-foreground" />
+                {locale === "ar" ? <ChevronLeft className="h-6 w-6 text-foreground" /> : <ChevronRight className="h-6 w-6 text-foreground" />}
               </button>
             </div>
           </div>

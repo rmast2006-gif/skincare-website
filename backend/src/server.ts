@@ -3,6 +3,7 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import connectDB from './config/database';
 
+
 import authRoutes from './routes/auth';
 import productRoutes from './routes/products';
 import analyticsRoutes from './routes/analytics';
@@ -47,6 +48,7 @@ app.use('/api/coupons', couponRoutes);
 app.use('/api/upload', uploadRoutes);
 app.use('/api/messages', messageRoutes);
 app.use('/api/orders', orderRoutes);
+
 
 // =======================
 // DEBUG ROUTE (ADDED)

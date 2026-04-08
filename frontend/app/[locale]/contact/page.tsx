@@ -239,7 +239,7 @@ export default function ContactPage() {
                         }`;
                         window.open(`https://wa.me/+962780686156?text=${whatsappMessage}`, "_blank");
                       }}
-                      className="bg-green-600 hover:bg-green-700 text-white"
+                      className="bg-pink-500 hover:bg-pink-600 text-white"
                     >
                       Send through WhatsApp
                     </Button>

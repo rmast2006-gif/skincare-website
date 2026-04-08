@@ -59,45 +59,62 @@ function DBProductCard({
   const image = product.images?.[0] || "/placeholder.jpg";
 
   return (
-    <div className="bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-lg transition-all duration-300 overflow-hidden group">
-      <div className="relative h-56 overflow-hidden bg-gray-50">
-        <img
-          src={image}
-          alt={name}
-          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-        />
+    <div className="bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-lg transition-all duration-300 overflow-hidden group h-full flex flex-col">
+
+      {/* Image */}
+      <Link href={`/product/${id}`} className="block">
+        <div className="relative h-56 overflow-hidden bg-white">
+          <img
+            src={image}
+            alt={name}
+            className="w-full h-full object-contain p-6 group-hover:scale-105 transition-transform duration-500"
+          />
+        </div>
+      </Link>
+
+      {/* Content */}
+      <div className="p-5 flex flex-col flex-1">
+
+        {/* Category badge */}
         {product.category && (
-          <span className="absolute top-3 left-3 text-xs px-2.5 py-1 rounded-full font-semibold uppercase tracking-wide"
-            style={{ background: '#f3f4f6', color: '#374151' }}>
+          <span className="inline-block self-start text-xs px-3 py-1 rounded-full font-semibold uppercase tracking-wide mb-3 border border-gray-200 text-gray-500 bg-white">
             {product.category}
           </span>
         )}
-      </div>
 
-      <div className="p-4">
-        <h3 className="font-semibold text-gray-900 text-sm leading-snug mb-1 line-clamp-2">
+        {/* Name */}
+        <h3 className="font-bold text-gray-900 text-base leading-snug mb-2 line-clamp-2">
           {name}
         </h3>
 
-        {product.skinType && (
-          <p className="text-xs text-gray-400 mb-2">
-            <span className="font-medium text-gray-500">FOR:</span> {product.skinType.toUpperCase()}
-          </p>
-        )}
-
+        {/* Description */}
         <p className="text-sm text-gray-400 mb-3 line-clamp-2">{description}</p>
 
-        <p className="text-lg font-bold mb-4" style={{ color: '#c9a96e' }}>
-          {product.price} <span className="text-xs font-medium text-gray-400">JOD</span>
-        </p>
+        <div className="mt-auto">
+          {/* Price */}
+          <div className="flex items-baseline gap-1 mb-1">
+            <span className="text-2xl font-bold text-gray-900">
+              {product.price}
+            </span>
+            <span className="text-sm font-medium text-gray-400">JOD</span>
+          </div>
 
-        <Link
-          href={`/product/${id}`}
-          className="block w-full text-center text-sm font-medium py-2.5 rounded-xl transition-all text-white hover:opacity-90"
-          style={{ background: '#ec4899' }}
-        >
-          View Details
-        </Link>
+          {/* Skin Type */}
+          {product.skinType && (
+            <p className="text-xs text-gray-500 mb-4">
+              <span className="font-semibold">FOR:</span> {product.skinType.toUpperCase()}
+            </p>
+          )}
+
+          {/* View Details button only */}
+          <Link
+            href={`/product/${id}`}
+            className="block w-full text-center text-sm font-semibold py-3 rounded-xl transition-all hover:opacity-90 text-white"
+            style={{ background: '#ec4899' }}
+          >
+            View Details
+          </Link>
+        </div>
       </div>
     </div>
   );
