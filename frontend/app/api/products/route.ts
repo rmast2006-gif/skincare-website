@@ -82,8 +82,49 @@ export async function POST(req: Request) {
       ingredients: { en: ingredientsEn, ar: ingredientsAr },
     }
 
+    // STEP 1: Save to store.json (primary)
     store.products.push(product)
     writeStore(store)
+
+    // STEP 2: Save to MongoDB via backend (secondary - silent fail)
+    try {
+      const backendUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'
+      
+      // Get admin token first
+      const loginRes = await fetch(`${backendUrl}/api/auth/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email: process.env.ADMIN_EMAIL || 'a.altawil@mazayaunited.com',
+          password: process.env.ADMIN_PASSWORD || 'Ammar',
+        }),
+      })
+      const loginData = await loginRes.json()
+      const adminToken = loginData.token || ''
+
+      // Save to MongoDB with token
+      await fetch(`${backendUrl}/api/products`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${adminToken}`,
+        },
+        body: JSON.stringify({
+          name: product.name,
+          description: product.description,
+          howToUse: product.howToUse,
+          price: product.price,
+          brand: product.brand,
+          category: product.category || 'general',
+          images: product.images && product.images.length > 0
+            ? product.images
+            : ['https://placehold.co/400x400?text=No+Image'],
+        }),
+      })
+    } catch (mongoErr) {
+      console.warn('[POST /api/products] MongoDB sync failed (non-fatal):', mongoErr)
+    }
+
     return NextResponse.json(product, { status: 201 })
   } catch (e) {
     return NextResponse.json({ error: 'Failed to add product' }, { status: 500 })

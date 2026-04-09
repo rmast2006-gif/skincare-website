@@ -1,6 +1,8 @@
 import { Request, Response } from 'express';
 import Product from '../models/Product';
 import Joi from 'joi';
+import fs from 'fs';
+import path from 'path';
 
 const productSchema = Joi.object({
   brand: Joi.string().valid('Topicrem', 'Novexpert').required(),
@@ -58,6 +60,28 @@ export const createProduct = async (req: Request, res: Response): Promise<void> 
 
     const product = new Product(req.body);
     await product.save();
+
+    console.log('🔥 createProduct API HIT');
+
+    // ✅ ALSO SAVE TO store.json
+    const filePath = path.join(__dirname, '../../../frontend/data/store.json');
+
+    const raw = fs.readFileSync(filePath, 'utf-8');
+    const store = JSON.parse(raw);
+
+    if (!store.products) {
+      store.products = [];
+    }
+
+    store.products.push({
+      ...req.body,
+      id: product._id.toString(),
+      createdAt: product.createdAt,
+      updatedAt: product.updatedAt
+    });
+
+    fs.writeFileSync(filePath, JSON.stringify(store, null, 2));
+
     res.status(201).json(product);
   } catch (error) {
     res.status(500).json({ message: 'Server error' });
