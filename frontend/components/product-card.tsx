@@ -6,14 +6,19 @@ import type { Product } from "@/lib/products";
 import { motion } from "framer-motion";
 import Image from "next/image";
 import { useTranslations, useLocale } from "next-intl";
+import { useCart } from '@/components/cart-provider';
+import { useState } from 'react';
 
 interface ProductCardProps {
   product: Product;
+  hideCartButton?: boolean;
 }
 
-export function ProductCard({ product }: ProductCardProps) {
+export function ProductCard({ product, hideCartButton }: ProductCardProps) {
   const t = useTranslations("Product");
   const locale = useLocale();
+  const { addToCart } = useCart()
+  const [added, setAdded] = useState(false)
 
   const name = locale === "ar" ? product.name.ar : product.name.en;
   const description = locale === "ar" ? product.description.ar : product.description.en;
@@ -69,13 +74,34 @@ export function ProductCard({ product }: ProductCardProps) {
               </p>
             )}
 
-            <Link
-              href={`/product/${product.id}`}
-              className="block w-full text-center text-sm font-semibold py-3 rounded-xl transition-all hover:opacity-90 text-white"
-              style={{ background: '#ec4899' }}
-            >
-              {t("viewDetails")}
-            </Link>
+            <div className="flex gap-2 mt-3">
+              <Link
+                href={`/product/${product.id}`}
+                className="flex-1 text-center text-xs font-medium py-2.5 rounded-xl transition-all"
+                style={{ background: '#ec4899', color: '#fff' }}
+              >
+                View Details
+              </Link>
+              {!hideCartButton && (
+                <button
+                  onClick={() => {
+                    addToCart({
+                      id: product.id,
+                      name: name,
+                      price: product.price,
+                      brand: product.brand,
+                      image: image,
+                    });
+                    setAdded(true);
+                    setTimeout(() => setAdded(false), 2000);
+                  }}
+                  className="flex-1 text-xs font-medium py-2.5 rounded-xl transition-all hover:opacity-90"
+                  style={{ background: added ? '#22c55e' : '#ec4899', color: '#fff' }}
+                >
+                  {added ? '✓ Added!' : '+ Cart'}
+                </button>
+              )}
+            </div>
           </div>
         </div>
       </div>

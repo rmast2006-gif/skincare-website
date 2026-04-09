@@ -90,7 +90,8 @@
     "free": "FREE",
     "total": "Total",
     "proceedToCheckout": "Proceed to Checkout",
-    "each": "each"
+    "each": "each",
+    "jod": "JOD"
   },
   "Checkout": {
     "title": "Checkout",

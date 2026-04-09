@@ -10,22 +10,45 @@ import { Minus, Plus, Trash2, ShoppingBag, Tag, Check, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useState } from "react";
 import { useTranslations } from "next-intl";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
 
 export default function CartPage() {
+  const DISCOUNT_PERCENTAGE = 20;
   const t = useTranslations("Cart");
-  const { items, updateQuantity, removeFromCart, total, itemCount } = useCart();
+  const { items, updateQuantity, removeFromCart, clearCart, total, itemCount } = useCart();
   const [couponCode, setCouponCode] = useState("");
   const [couponApplied, setCouponApplied] = useState(false);
   const [couponError, setCouponError] = useState("");
+  const [isOrderModalOpen, setIsOrderModalOpen] = useState(false);
+  const [customerDetails, setCustomerDetails] = useState({
+    name: '',
+    phone: '',
+    email: '',
+    city: '',
+    address: '',
+  });
 
-  const VALID_COUPON = "SKIN20";
-  const DISCOUNT_PERCENTAGE = 20;
-
-  const handleApplyCoupon = () => {
-    if (couponCode.trim().toUpperCase() === VALID_COUPON) {
+  const handleApplyCoupon = async () => {
+    if (!couponCode.trim()) return;
+    try {
+      const res = await fetch('/api/coupons/validate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          code: couponCode.trim().toUpperCase(),
+          productIds: items.map(item => item.id)
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok || data.error) {
+        setCouponError(t("invalidCoupon"));
+        setCouponApplied(false);
+        return;
+      }
       setCouponApplied(true);
       setCouponError("");
-    } else {
+    } catch (e) {
       setCouponError(t("invalidCoupon"));
       setCouponApplied(false);
     }
@@ -39,6 +62,57 @@ export default function CartPage() {
 
   const discount = couponApplied ? (total * DISCOUNT_PERCENTAGE) / 100 : 0;
   const finalTotal = total - discount;
+
+  const handleWhatsAppOrder = async () => {
+    const itemsList = items.map((item, i) =>
+      `${i + 1}. ${item.name}\n   Brand: ${item.brand}\n   Qty: ${item.quantity}\n   Price: ${(item.price * item.quantity).toFixed(2)} JOD`
+    ).join('\n\n');
+
+    const message = `New Order - Topicrem & Novexpert\n\n` +
+      `Customer Details:\n` +
+      `Name: ${customerDetails.name}\n` +
+      `Phone: ${customerDetails.phone}\n` +
+      `Email: ${customerDetails.email}\n` +
+      `City: ${customerDetails.city}\n` +
+      `Address: ${customerDetails.address}\n\n` +
+      `Order Items:\n\n${itemsList}\n\n` +
+      `${couponApplied ? `Coupon: SKIN20 (-20%)\n` : ''}` +
+      `Total: ${finalTotal.toFixed(2)} JOD`;
+
+    // Save order to admin dashboard
+    try {
+      await fetch('/api/orders', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          customerName: customerDetails.name,
+          phone: customerDetails.phone,
+          email: customerDetails.email,
+          address: `${customerDetails.city}, ${customerDetails.address}`,
+          items: items.map(item => ({
+            productName: item.name,
+            brand: item.brand,
+            quantity: item.quantity,
+            price: item.price,
+          })),
+          total: finalTotal,
+          status: 'pending',
+        }),
+      });
+    } catch (e) {
+      console.error('Failed to save order:', e);
+    }
+
+    // Open WhatsApp
+    window.open(`https://wa.me/962780686156?text=${encodeURIComponent(message)}`, '_blank');
+    
+    // Clear cart
+    clearCart();
+    
+    // Close modal and reset form
+    setIsOrderModalOpen(false);
+    setCustomerDetails({ name: '', phone: '', email: '', city: '', address: '' });
+  };
 
   if (items.length === 0) {
     return (
@@ -368,11 +442,16 @@ export default function CartPage() {
                       whileHover={{ scale: 1.02 }}
                       whileTap={{ scale: 0.98 }}
                     >
-                      <Link href="/checkout">
-                        <Button size="lg" className="w-full">
-                          {t("proceedToCheckout")}
-                        </Button>
-                      </Link>
+                      <button
+                        onClick={() => setIsOrderModalOpen(true)}
+                        className="w-full py-3 rounded-lg text-white font-semibold flex items-center justify-center gap-2 hover:opacity-90 transition-all"
+                        style={{ background: '#ec4899' }}
+                      >
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                          <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/>
+                        </svg>
+                        Order All via WhatsApp
+                      </button>
                     </motion.div>
 
                     <motion.div
@@ -395,6 +474,95 @@ export default function CartPage() {
           </div>
         </div>
       </div>
+
+      <Dialog open={isOrderModalOpen} onOpenChange={setIsOrderModalOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="text-xl font-bold">Complete Your Order</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 pt-2">
+            <p className="text-sm text-muted-foreground">
+              Please fill in your details and we'll send your order via WhatsApp.
+            </p>
+
+            <div className="space-y-2">
+              <Label htmlFor="order-name">Full Name *</Label>
+              <Input
+                id="order-name"
+                placeholder="Enter your full name"
+                value={customerDetails.name}
+                onChange={(e) => setCustomerDetails({ ...customerDetails, name: e.target.value })}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="order-phone">Phone / WhatsApp Number *</Label>
+              <Input
+                id="order-phone"
+                placeholder="+962 78 123 4567"
+                value={customerDetails.phone}
+                onChange={(e) => setCustomerDetails({ ...customerDetails, phone: e.target.value })}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="order-email">Email Address *</Label>
+              <Input
+                id="order-email"
+                type="email"
+                placeholder="your@email.com"
+                value={customerDetails.email}
+                onChange={(e) => setCustomerDetails({ ...customerDetails, email: e.target.value })}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="order-city">City *</Label>
+              <Input
+                id="order-city"
+                placeholder="e.g. Amman"
+                value={customerDetails.city}
+                onChange={(e) => setCustomerDetails({ ...customerDetails, city: e.target.value })}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="order-address">Delivery Address *</Label>
+              <Input
+                id="order-address"
+                placeholder="Street, building, apartment..."
+                value={customerDetails.address}
+                onChange={(e) => setCustomerDetails({ ...customerDetails, address: e.target.value })}
+              />
+            </div>
+
+            <div className="pt-2 space-y-2">
+              <button
+                onClick={() => {
+                  if (!customerDetails.name || !customerDetails.phone || !customerDetails.city) {
+                    alert('Please fill in Name, Phone, and City at minimum.');
+                    return;
+                  }
+                  handleWhatsAppOrder();
+                }}
+                className="w-full py-3 rounded-lg text-white font-semibold flex items-center justify-center gap-2 hover:opacity-90 transition-all"
+                style={{ background: '#ec4899' }}
+              >
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/>
+                </svg>
+                Send Order via WhatsApp
+              </button>
+              <button
+                onClick={() => setIsOrderModalOpen(false)}
+                className="w-full py-2 rounded-lg border border-gray-200 text-sm text-gray-500 hover:bg-gray-50 transition-all"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

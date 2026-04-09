@@ -8,17 +8,7 @@ import { SiteFooter } from '@/components/site-footer';
 import Image from 'next/image';
 import { ArrowLeft, Sparkles, Leaf, BookOpen, ShieldCheck } from 'lucide-react';
 import Link from 'next/link';
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from '@/components/ui/dialog';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import { Label } from '@/components/ui/label';
-import { useForm } from 'react-hook-form';
+import { useCart } from '@/components/cart-provider';
 
 interface Product {
   id: string;
@@ -33,15 +23,6 @@ interface Product {
   texture?: string;
   skinType?: string;
   images?: string[];
-}
-
-interface OrderFormData {
-  name: string;
-  whatsappNumber: string;
-  email: string;
-  address: string;
-  quantity: number;
-  notes: string;
 }
 
 function getField(val: string | { en: string; ar: string } | undefined, lang: string): string {
@@ -68,17 +49,9 @@ export default function ProductDetailPage() {
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
   const [selectedImage, setSelectedImage] = useState(0);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [couponCode, setCouponCode] = useState('')
-  const [couponError, setCouponError] = useState('')
-  const [couponSuccess, setCouponSuccess] = useState('')
-  const [discount, setDiscount] = useState(0)
-  const [couponApplied, setCouponApplied] = useState(false)
-  const [finalPrice, setFinalPrice] = useState(0)
+  const [addedToCart, setAddedToCart] = useState(false)
 
-  const { register, handleSubmit, reset, formState: { errors } } = useForm<OrderFormData>({
-    defaultValues: { quantity: 1 }
-  });
+  const { addToCart } = useCart()
 
   useEffect(() => {
     if (!id) return;
@@ -90,87 +63,6 @@ export default function ProductDetailPage() {
       })
       .catch(() => setLoading(false));
   }, [id]);
-
-const handleApplyCoupon = async () => {
-    setCouponError('')
-    setCouponSuccess('')
-    if (!couponCode.trim()) return setCouponError('Enter a coupon code')
-    if (!product) return
-
-    try {
-      const res = await fetch('/api/coupons/validate', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ code: couponCode, productIds: [product.id] }),
-      })
-      const data = await res.json()
-      if (!res.ok) return setCouponError(data.error || 'Invalid coupon')
-
-      const discounted = product.price * (1 - data.discount / 100)
-      setDiscount(data.discount)
-      setFinalPrice(discounted)
-      setCouponApplied(true)
-      setCouponSuccess(`${data.discount}% discount applied!`)
-    } catch (e) {
-      setCouponError('Failed to apply coupon')
-    }
-  }
-  const onSubmit = async (data: OrderFormData) => {
-    if (!product) return;
-    const name = getField(product.name, lang);
-    const qty = Number(data.quantity) || 1;
-    const unitPrice = couponApplied ? finalPrice : product.price
-    const total = (unitPrice * qty).toFixed(2);
-
-    try {
-      await fetch('/api/orders', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          customerName: data.name,
-          customerPhone: data.whatsappNumber,
-          customerEmail: data.email,
-          customerAddress: data.address,
-          productName: name,
-          brand: product.brand,
-          quantity: qty,
-          price: product.price,
-          total: Number(total),
-          notes: data.notes,
-        }),
-      });
-    } catch (e) {
-      console.error(e);
-    }
-
-    const message = `New Order - Topicrem & Novexpert
-
-Customer Information:
-Name: ${data.name}
-Phone: ${data.whatsappNumber}
-Email: ${data.email}
-Address: ${data.address}
-
-Order Details:
-1. ${name}
-   Brand: ${product.brand}
-   Quantity: ${qty}
-   Price per unit: ${unitPrice.toFixed(2)} JOD
-   ${couponApplied ? `Coupon: ${couponCode} (-${discount}%)` : ''}
-
-Total: ${total} JOD
-Notes: ${data.notes || '—'}`;
-
-    window.open(`https://wa.me/962780686156?text=${encodeURIComponent(message)}`, '_blank');
-   setIsModalOpen(false);
-    reset();
-    setCouponCode('')
-    setCouponApplied(false)
-    setCouponSuccess('')
-    setCouponError('')
-    setDiscount(0)
-    setFinalPrice(0)
-  };
 
   if (loading) {
     return (
@@ -291,114 +183,35 @@ Notes: ${data.notes || '—'}`;
               </div>
             </div>
 
-            {/* WhatsApp Order Button */}
-            <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
-              <DialogTrigger asChild>
-                <button
-                  className="w-full py-4 rounded-2xl text-white font-semibold text-base transition-all hover:opacity-90 flex items-center justify-center gap-2"
-                  style={{ background: '#ec4899' }}
-                >
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/>
+            {/* Add to Cart Button */}
+            <button
+              onClick={() => {
+                addToCart({
+                  id: product.id || id,
+                  name: getField(product.name, lang),
+                  price: product.price,
+                  brand: product.brand,
+                  image: images[0] || '',
+                });
+                setAddedToCart(true);
+                setTimeout(() => setAddedToCart(false), 2000);
+              }}
+              className="w-full py-4 rounded-2xl text-white font-semibold text-base transition-all hover:opacity-90 flex items-center justify-center gap-2"
+              style={{ background: addedToCart ? '#22c55e' : '#ec4899' }}
+            >
+              {addedToCart ? (
+                <>✓ Added to Cart!</>
+              ) : (
+                <>
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/>
+                    <line x1="3" y1="6" x2="21" y2="6"/>
+                    <path d="M16 10a4 4 0 01-8 0"/>
                   </svg>
-                  Order on WhatsApp
-                </button>
-              </DialogTrigger>
-              <DialogContent className="sm:max-w-md">
-                <DialogHeader>
-                  <DialogTitle>Order via WhatsApp</DialogTitle>
-                </DialogHeader>
-                <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-                  <div>
-                    <Label htmlFor="name">Full Name *</Label>
-                    <Input id="name" {...register("name", { required: "Name is required" })} placeholder="Enter your full name" />
-                    {errors.name && <p className="text-red-500 text-sm">{errors.name.message}</p>}
-                  </div>
-                  <div>
-                    <Label htmlFor="whatsappNumber">WhatsApp Number *</Label>
-                    <Input id="whatsappNumber" {...register("whatsappNumber", { required: "WhatsApp number is required" })} placeholder="e.g. +962 78 123 4567" />
-                    {errors.whatsappNumber && <p className="text-red-500 text-sm">{errors.whatsappNumber.message}</p>}
-                  </div>
-                  <div>
-                    <Label htmlFor="email">Email Address *</Label>
-                    <Input id="email" type="email" {...register("email", { required: "Email is required" })} placeholder="Enter your email" />
-                    {errors.email && <p className="text-red-500 text-sm">{errors.email.message}</p>}
-                  </div>
-                  <div>
-                    <Label htmlFor="address">Delivery Address *</Label>
-                    <Textarea id="address" {...register("address", { required: "Address is required" })} placeholder="Enter your delivery address" rows={3} />
-                    {errors.address && <p className="text-red-500 text-sm">{errors.address.message}</p>}
-                  </div>
-                  <div>
-                    <Label htmlFor="quantity">Quantity *</Label>
-                    <Input
-                      id="quantity"
-                      type="number"
-                      min={1}
-                      {...register("quantity", {
-                        required: "Quantity is required",
-                        min: { value: 1, message: "Minimum 1" },
-                        valueAsNumber: true
-                      })}
-                    />
-                    {errors.quantity && <p className="text-red-500 text-sm">{errors.quantity.message}</p>}
-                  </div>
-                  {/* Coupon Code */}
-                  <div>
-                    <Label>Coupon Code (optional)</Label>
-                    <div className="flex gap-2 mt-1">
-                      <input
-                        type="text"
-                        value={couponCode}
-                        onChange={e => setCouponCode(e.target.value.toUpperCase())}
-                        placeholder="Enter coupon code"
-                        disabled={couponApplied}
-                        className="flex-1 border border-gray-200 rounded-lg px-3 py-2 text-sm outline-none font-mono tracking-widest"
-                      />
-                      <button
-                        type="button"
-                        onClick={handleApplyCoupon}
-                        disabled={couponApplied}
-                        className="px-3 py-2 rounded-lg text-white text-sm font-medium disabled:opacity-50"
-                        style={{ background: '#c9a96e' }}
-                      >
-                        {couponApplied ? '✓' : 'Apply'}
-                      </button>
-                    </div>
-                    {couponError && <p className="text-red-500 text-xs mt-1">{couponError}</p>}
-                    {couponSuccess && <p className="text-green-600 text-xs mt-1">{couponSuccess}</p>}
-                    {couponApplied && (
-                      <div className="flex items-center justify-between mt-2 bg-green-50 px-3 py-2 rounded-lg">
-                        <span className="text-xs text-green-700 font-medium">
-                          Price after discount: {finalPrice.toFixed(2)} JOD
-                        </span>
-                        <button
-                          type="button"
-                          onClick={() => {
-                            setCouponApplied(false)
-                            setCouponCode('')
-                            setCouponSuccess('')
-                            setCouponError('')
-                            setDiscount(0)
-                            setFinalPrice(0)
-                          }}
-                          className="text-xs text-red-400 hover:text-red-600"
-                        >
-                          Remove
-                        </button>
-                      </div>
-                    )}
-                  </div>
-                  <div>
-                    <Label htmlFor="notes">Additional Notes (optional)</Label>
-                    <Textarea id="notes" {...register("notes")} placeholder="Any special instructions" rows={2} />
-                  </div>
-                  <button type="submit" className="w-full py-3 rounded-xl text-white font-semibold bg-pink-500 hover:bg-pink-600 transition-all">
-                    Send Order via WhatsApp
-                  </button>
-                </form>
-              </DialogContent>
-            </Dialog>
+                  Add to Cart
+                </>
+              )}
+            </button>
 
             {(product.texture || product.skinType) && (
               <div className="grid grid-cols-2 gap-3 mt-4">

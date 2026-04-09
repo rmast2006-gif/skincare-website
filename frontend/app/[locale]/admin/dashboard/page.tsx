@@ -187,10 +187,11 @@ export default function AdminDashboard() {
     ]);
 
     setAnalytics(analyticsData);
-    setOrders(Array.isArray(ordersData) ? ordersData : []);
+    const ordersArray = Array.isArray(ordersData) ? ordersData : (ordersData?.data || ordersData?.orders || []);
+    setOrders(ordersArray);
+    setFilteredOrders(ordersArray);
     setMessages(Array.isArray(messagesData) ? messagesData : []);
     setProducts(Array.isArray(productsData) ? productsData : []);
-    setFilteredOrders(Array.isArray(ordersData) ? ordersData : []);
     setAllCategories(categoriesData);
   } catch (err) {
     console.error('Fetch error:', err);
