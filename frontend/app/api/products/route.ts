@@ -88,7 +88,7 @@ export async function POST(req: Request) {
 
     // STEP 2: Save to MongoDB via backend (secondary - silent fail)
     try {
-      const backendUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'
+      const backendUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5007'
       
       // Get admin token first
       const loginRes = await fetch(`${backendUrl}/api/auth/login`, {

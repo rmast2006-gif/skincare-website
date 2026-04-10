@@ -26,7 +26,7 @@ export default function AdminProducts() {
       return;
     }
 
-    fetch('http://localhost:5000/api/products', {
+    fetch('http://localhost:5007/api/products', {
       headers: { Authorization: `Bearer ${token}` },
     })
       .then(res => res.json())
@@ -35,7 +35,7 @@ export default function AdminProducts() {
 
   const handleDelete = async (id: string) => {
     const token = localStorage.getItem('adminToken');
-    await fetch(`http://localhost:5000/api/products/${id}`, {
+    await fetch(`http://localhost:5007/api/products/${id}`, {
       method: 'DELETE',
       headers: { Authorization: `Bearer ${token}` },
     });
@@ -89,7 +89,7 @@ function ProductForm({ onSave }: { onSave: () => void }) {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const token = localStorage.getItem('adminToken');
-    await fetch('http://localhost:5000/api/products', {
+    await fetch('http://localhost:5007/api/products', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
       body: JSON.stringify(form),

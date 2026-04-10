@@ -54,7 +54,7 @@ export default function HomePage() {
   useEffect(() => {
     const id = setInterval(() => {
       setHeroIndex((i) => (i + 1) % HERO_SLIDES.length);
-    }, 5000);
+    }, 5007);
     return () => clearInterval(id);
   }, []);
 

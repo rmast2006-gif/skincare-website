@@ -49,7 +49,7 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
 
     // STEP 2: Sync update to MongoDB via backend (secondary - silent fail)
     try {
-      const backendUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'
+      const backendUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5007'
       // Find MongoDB _id for this product if it exists
       const mongoProduct = store.products[productIndex]
       if ((mongoProduct as any).mongoId) {
@@ -96,7 +96,7 @@ export async function DELETE(req: Request, { params }: { params: Promise<{ id: s
 
     // STEP 2: Delete from MongoDB via backend (secondary - silent fail)
     try {
-      const backendUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'
+      const backendUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5007'
       if ((deletedProduct as any).mongoId) {
         await fetch(`${backendUrl}/api/products/${(deletedProduct as any).mongoId}`, {
           method: 'DELETE',

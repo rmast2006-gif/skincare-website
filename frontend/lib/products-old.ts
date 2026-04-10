@@ -18,7 +18,7 @@ export interface Product {
   };
 }
 
-const API_BASE = process.env.NEXT_PUBLIC_API_BASE || 'http://localhost:5000/api';
+const API_BASE = process.env.NEXT_PUBLIC_API_BASE || 'http://localhost:5007/api';
 
 export const fetchProducts = async (brand?: string, category?: string): Promise<Product[]> => {
   const params = new URLSearchParams();
